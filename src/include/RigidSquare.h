@@ -4,6 +4,5 @@
 
 #include "raylib/raylib.h"
 
-RigidSquare* createRigidSquare( float x, float y, float w, float h, Color color, GameWorld *gw );
-void destroyRigidSquare( RigidSquare *s );
-void drawRigidSquare( RigidSquare *s );
+void createRigidSquare( RigidSquare* newSquare, float x, float y, float w, float h, Color color, GameWorld *gw );
+void drawRigidSquare( RigidSquare *square );

@@ -4,6 +4,5 @@
 
 #include "raylib/raylib.h"
 
-DynamicSquare* createDynamicSquare( float x, float y, float w, float h, Color color, GameWorld *gw );
-void destroyDynamicSquare( DynamicSquare *s );
-void drawDynamicSquare( DynamicSquare *s );
+void createDynamicSquare( DynamicSquare *newSquare, float x, float y, float w, float h, Color color, GameWorld *gw );
+void drawDynamicSquare( DynamicSquare *square );

@@ -13,7 +13,9 @@
 #include "GameWorld.h"
 #include "ResourceManager.h"
 #include "RigidSquare.h"
+#include "RigidCircle.h"
 #include "DynamicSquare.h"
+#include "DynamicCircle.h"
 
 #include "raylib/raylib.h"
 #include "raylib/rlgl.h"
@@ -30,15 +32,21 @@ GameWorld* createGameWorld( void ) {
     gw->worldDef = b2DefaultWorldDef();
     gw->worldDef.gravity = (b2Vec2){0.0f, -10.0f};
     gw->worldId = b2CreateWorld( &gw->worldDef );
-    gw->squareQuantity = 0;
+
+    gw->rigidSquareQuantity = 0;
+    gw->dynamicSquareQuantity = 0;
+    gw->dynamicCircleQuantity = 0;
     
     float cx = GetScreenWidth() / 2;
     float cy = GetScreenHeight() / 2;
     float rWidth = 10.0f;
 
-    gw->ground = createRigidSquare( cx, -GetScreenHeight() + rWidth / 2, GetScreenWidth(), rWidth, BLACK, gw );
-    gw->leftWall = createRigidSquare( rWidth / 2, -cy, rWidth, GetScreenHeight(), BLACK, gw );
-    gw->rightWall = createRigidSquare( GetScreenWidth() - rWidth / 2, -cy, rWidth, GetScreenHeight(), BLACK, gw );
+    createRigidSquare( &gw->rigidSquares[gw->rigidSquareQuantity], cx, -GetScreenHeight() + rWidth / 2, GetScreenWidth(), rWidth, BLACK, gw );
+    gw->rigidSquareQuantity++;
+    createRigidSquare( &gw->rigidSquares[gw->rigidSquareQuantity], rWidth / 2, -cy, rWidth, GetScreenHeight(), BLACK, gw );
+    gw->rigidSquareQuantity++;
+    createRigidSquare( &gw->rigidSquares[gw->rigidSquareQuantity], GetScreenWidth() - rWidth / 2, -cy, rWidth, GetScreenHeight(), BLACK, gw );
+    gw->rigidSquareQuantity++;
 
     return gw;
 
@@ -48,17 +56,8 @@ GameWorld* createGameWorld( void ) {
  * @brief Destroys a GameWindow object and its dependecies.
  */
 void destroyGameWorld( GameWorld *gw ) {
-
     b2DestroyWorld( gw->worldId );
-
-    destroyRigidSquare( gw->ground );
-
-    for ( int i = 0; i < gw->squareQuantity; i++ ) {
-        destroyDynamicSquare( gw->squares[i] );
-    }
-
     free( gw );
-
 }
 
 /**
@@ -66,17 +65,47 @@ void destroyGameWorld( GameWorld *gw ) {
  */
 void updateGameWorld( GameWorld *gw, float delta ) {
 
-    if ( gw->squareQuantity < MAX_SQUARE_QUANTITY ) {
-        if ( IsMouseButtonDown( MOUSE_BUTTON_LEFT ) ) {
-            gw->squares[gw->squareQuantity] = createDynamicSquare( 
+    if ( IsMouseButtonDown( MOUSE_BUTTON_LEFT ) ) {
+        /*if ( gw->dynamicSquareQuantity < MAX_DYNAMIC_SQUARES ) {
+            createDynamicSquare( 
+                &gw->dynamicSquares[gw->dynamicSquareQuantity],
+                GetMouseX(), 
+                -GetMouseY(), 
+                //8.0f, 
+                //8.0f,
+                GetRandomValue( 8, 28 ),
+                GetRandomValue( 8, 28 ),
+                ColorFromHSV( gw->dynamicSquareQuantity % 360, 1.0f, 1.0f ),
+                gw
+            );
+            gw->dynamicSquareQuantity++;
+        }*/
+        if ( gw->dynamicCircleQuantity < MAX_DYNAMIC_CIRCLES ) {
+            createDynamicCircle( 
+                &gw->dynamicCircles[gw->dynamicCircleQuantity],
+                GetMouseX(), 
+                -GetMouseY(), 
+                //GetRandomValue( 4, 14 ), 
+                4, 
+                ColorFromHSV( gw->dynamicCircleQuantity % 360, 1.0f, 1.0f ),
+                gw
+            );
+            gw->dynamicCircleQuantity++;
+        }
+    }
+
+    if ( IsMouseButtonPressed( MOUSE_BUTTON_RIGHT ) ) {
+        if ( gw->rigidSquareQuantity < MAX_RIGID_SQUARES ) {
+            createRigidSquare( 
+                &gw->rigidSquares[gw->rigidSquareQuantity],
                 GetMouseX(), 
                 -GetMouseY(), 
                 8.0f, 
                 8.0f, 
-                ColorFromHSV( gw->squareQuantity % 360, 1.0f, 1.0f ),
+                BLACK,
                 gw
             );
-            gw->squareQuantity++;
+            gw->rigidSquareQuantity++;
         }
     }
 
@@ -96,16 +125,20 @@ void drawGameWorld( GameWorld *gw ) {
     //rlTranslatef( 200, 200, 0 );
     //rlScalef( 2, 2, 1 );
 
-    drawRigidSquare( gw->ground );
-    drawRigidSquare( gw->leftWall );
-    drawRigidSquare( gw->rightWall );
+    for ( int i = 0; i < gw->rigidSquareQuantity; i++ ) {
+        drawRigidSquare( &gw->rigidSquares[i] );
+    }
 
-    for ( int i = 0; i < gw->squareQuantity; i++ ) {
-        drawDynamicSquare( gw->squares[i] );
+    for ( int i = 0; i < gw->dynamicSquareQuantity; i++ ) {
+        drawDynamicSquare( &gw->dynamicSquares[i] );
+    }
+
+    for ( int i = 0; i < gw->dynamicCircleQuantity; i++ ) {
+        drawDynamicCircle( &gw->dynamicCircles[i] );
     }
 
     DrawFPS( 20, 20 );
-    DrawText( TextFormat( "Squares: %d", gw->squareQuantity ), 20, 40, 20, BLACK );
+    DrawText( TextFormat( "Squares: %d", gw->dynamicSquareQuantity ), 20, 40, 20, BLACK );
 
     EndDrawing();
 
