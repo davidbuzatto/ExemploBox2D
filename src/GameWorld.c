@@ -50,8 +50,8 @@ GameWorld* createGameWorld( void ) {
     createStaticSquare( &gw->staticSquares[gw->staticSquareQuantity], GetScreenWidth() - rWidth / 2, cy, rWidth, GetScreenHeight(), BLACK, gw );
     gw->staticSquareQuantity++;
 
-    createStaticCircle( &gw->staticCircles[gw->staticCircleQuantity], cx, cy, 30, BLACK, gw );
-    gw->staticCircleQuantity++;
+    /*createStaticCircle( &gw->staticCircles[gw->staticCircleQuantity], cx, cy, 30, BLACK, gw );
+    gw->staticCircleQuantity++;*/
 
     return gw;
 
@@ -77,7 +77,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                     &gw->dynamicCircles[gw->dynamicCircleQuantity],
                     GetMouseX(), 
                     GetScreenHeight() - GetMouseY(), 
-                    4, 
+                    //4, 
+                    GetRandomValue( 4, 20 ),
                     ColorFromHSV( gw->dynamicCircleQuantity % 360, 1.0f, 1.0f ),
                     gw
                 );
