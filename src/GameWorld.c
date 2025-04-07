@@ -70,7 +70,7 @@ void destroyGameWorld( GameWorld *gw ) {
  */
 void updateGameWorld( GameWorld *gw, float delta ) {
 
-    if ( IsMouseButtonPressed( MOUSE_BUTTON_LEFT ) ) {
+    if ( IsMouseButtonDown( MOUSE_BUTTON_LEFT ) ) {
         if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
             if ( gw->dynamicCircleQuantity < MAX_DYNAMIC_CIRCLES ) {
                 createDynamicCircle( 
@@ -160,9 +160,9 @@ void drawGameWorld( GameWorld *gw ) {
         drawDynamicCircle( &gw->dynamicCircles[i] );
     }
 
-    DrawFPS( 20, 20 );
-    DrawText( TextFormat( "Squares: %d", gw->dynamicSquareQuantity ), 20, 40, 20, BLACK );
-    DrawText( TextFormat( "Circles: %d", gw->dynamicCircleQuantity ), 20, 60, 20, BLACK );
+    DrawFPS( 20, -GetScreenHeight() + 20 );
+    DrawText( TextFormat( "Squares: %d", gw->dynamicSquareQuantity ), 20, -GetScreenHeight() + 40, 20, BLACK );
+    DrawText( TextFormat( "Circles: %d", gw->dynamicCircleQuantity ), 20, -GetScreenHeight() + 60, 20, BLACK );
 
     EndDrawing();
 
