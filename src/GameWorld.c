@@ -43,14 +43,14 @@ GameWorld* createGameWorld( void ) {
     float cy = GetScreenHeight() / 2;
     float rWidth = 10.0f;
 
-    createStaticSquare( &gw->staticSquares[gw->staticSquareQuantity], cx, -GetScreenHeight() + rWidth / 2, GetScreenWidth(), rWidth, BLACK, gw );
+    createStaticSquare( &gw->staticSquares[gw->staticSquareQuantity], cx, rWidth / 2, GetScreenWidth(), rWidth, BLACK, gw );
     gw->staticSquareQuantity++;
-    createStaticSquare( &gw->staticSquares[gw->staticSquareQuantity], rWidth / 2, -cy, rWidth, GetScreenHeight(), BLACK, gw );
+    createStaticSquare( &gw->staticSquares[gw->staticSquareQuantity], rWidth / 2, cy, rWidth, GetScreenHeight(), BLACK, gw );
     gw->staticSquareQuantity++;
-    createStaticSquare( &gw->staticSquares[gw->staticSquareQuantity], GetScreenWidth() - rWidth / 2, -cy, rWidth, GetScreenHeight(), BLACK, gw );
+    createStaticSquare( &gw->staticSquares[gw->staticSquareQuantity], GetScreenWidth() - rWidth / 2, cy, rWidth, GetScreenHeight(), BLACK, gw );
     gw->staticSquareQuantity++;
 
-    createStaticCircle( &gw->staticCircles[gw->staticCircleQuantity], cx, -cy, 30, BLACK, gw );
+    createStaticCircle( &gw->staticCircles[gw->staticCircleQuantity], cx, cy, 30, BLACK, gw );
     gw->staticCircleQuantity++;
 
     return gw;
@@ -76,7 +76,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                 createDynamicCircle( 
                     &gw->dynamicCircles[gw->dynamicCircleQuantity],
                     GetMouseX(), 
-                    -GetMouseY(), 
+                    GetScreenHeight() - GetMouseY(), 
                     4, 
                     ColorFromHSV( gw->dynamicCircleQuantity % 360, 1.0f, 1.0f ),
                     gw
@@ -88,7 +88,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                 createDynamicSquare( 
                     &gw->dynamicSquares[gw->dynamicSquareQuantity],
                     GetMouseX(), 
-                    -GetMouseY(), 
+                    GetScreenHeight() - GetMouseY(), 
                     8.0f, 
                     8.0f,
                     ColorFromHSV( gw->dynamicSquareQuantity % 360, 1.0f, 1.0f ),
@@ -106,7 +106,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                     createStaticCircle( 
                         &gw->staticCircles[gw->staticCircleQuantity],
                         GetMouseX(), 
-                        -GetMouseY(), 
+                        GetScreenHeight() - GetMouseY(), 
                         8.0f, 
                         BLACK,
                         gw
@@ -118,9 +118,9 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             createStaticSquare( 
                 &gw->staticSquares[gw->staticSquareQuantity],
                 GetMouseX(), 
-                -GetMouseY(), 
-                8.0f, 
-                8.0f, 
+                GetScreenHeight() - GetMouseY(), 
+                16.0f, 
+                16.0f, 
                 BLACK,
                 gw
             );
@@ -141,21 +141,21 @@ void drawGameWorld( GameWorld *gw ) {
     BeginDrawing();
     ClearBackground( WHITE );
 
-    //rlTranslatef( 200, 200, 0 );
+    rlTranslatef( 0, GetScreenHeight(), 0 );
     //rlScalef( 2, 2, 1 );
 
     for ( int i = 0; i < gw->staticSquareQuantity; i++ ) {
         drawStaticSquare( &gw->staticSquares[i] );
     }
 
-    for ( int i = 0; i < gw->dynamicSquareQuantity; i++ ) {
-        drawDynamicSquare( &gw->dynamicSquares[i] );
-    }
-
     for ( int i = 0; i < gw->staticCircleQuantity; i++ ) {
         drawStaticCircle( &gw->staticCircles[i] );
     }
 
+    for ( int i = 0; i < gw->dynamicSquareQuantity; i++ ) {
+        drawDynamicSquare( &gw->dynamicSquares[i] );
+    }
+    
     for ( int i = 0; i < gw->dynamicCircleQuantity; i++ ) {
         drawDynamicCircle( &gw->dynamicCircles[i] );
     }
