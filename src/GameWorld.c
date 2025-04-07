@@ -30,7 +30,7 @@ GameWorld* createGameWorld( void ) {
     GameWorld *gw = (GameWorld*) malloc( sizeof( GameWorld ) );
 
     gw->worldDef = b2DefaultWorldDef();
-    gw->worldDef.gravity = (b2Vec2){0.0f, -10.0f};
+    gw->worldDef.gravity = (b2Vec2){ 0.0f, -10.0f };
     gw->worldId = b2CreateWorld( &gw->worldDef );
 
     gw->staticSquareQuantity = 0;
