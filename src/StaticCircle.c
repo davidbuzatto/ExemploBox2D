@@ -4,15 +4,16 @@
 #include "box2d/box2d.h"
 #include "raylib/raylib.h"
 
-#include "RigidCircle.h"
+#include "StaticCircle.h"
 #include "Types.h"
 
-void createRigidCircle( RigidCircle* newCircle, float x, float y, float r, Color color, GameWorld *gw ) {
+void createStaticCircle( StaticCircle* newCircle, float x, float y, float r, Color color, GameWorld *gw ) {
 
     newCircle->radius = r;
 
     newCircle->bodyDef = b2DefaultBodyDef();
     newCircle->bodyDef.position = (b2Vec2){ x, y };
+    newCircle->bodyDef.type = b2_staticBody;
     newCircle->bodyId = b2CreateBody( gw->worldId, &newCircle->bodyDef );
     
     newCircle->circle = (b2Circle){ { x, y }, r };
@@ -24,7 +25,7 @@ void createRigidCircle( RigidCircle* newCircle, float x, float y, float r, Color
 
 }
 
-void drawRigidCircle( RigidCircle *circle ) {
+void drawStaticCircle( StaticCircle *circle ) {
 
     DrawCircle( 
         circle->circle.center.x, 

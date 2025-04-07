@@ -3,8 +3,8 @@
 #include "box2d/box2d.h"
 #include "raylib/raylib.h"
 
-#define MAX_RIGID_SQUARES 100
-#define MAX_RIGID_CIRCLES 100
+#define MAX_STATIC_SQUARES 100
+#define MAX_STATIC_CIRCLES 100
 #define MAX_DYNAMIC_SQUARES 5000
 #define MAX_DYNAMIC_CIRCLES 5000
 
@@ -28,7 +28,7 @@ typedef struct DynamicCircle {
     Color color;
 } DynamicCircle;
 
-typedef struct RigidSquare {
+typedef struct StaticSquare {
     Vector2 dim;
     b2BodyDef bodyDef;
     b2BodyId bodyId;
@@ -36,9 +36,9 @@ typedef struct RigidSquare {
     b2ShapeDef shapeDef;
     b2ShapeId shapeId;
     Color color;
-} RigidSquare;
+} StaticSquare;
 
-typedef struct RigidCircle {
+typedef struct StaticCircle {
     float radius;
     b2BodyDef bodyDef;
     b2BodyId bodyId;
@@ -46,18 +46,21 @@ typedef struct RigidCircle {
     b2ShapeDef shapeDef;
     b2ShapeId shapeId;
     Color color;
-} RigidCircle;
+} StaticCircle;
 
 typedef struct GameWorld {
 
     b2WorldDef worldDef;
     b2WorldId worldId;
 
-    RigidSquare rigidSquares[MAX_RIGID_SQUARES];
-    int rigidSquareQuantity;
+    StaticSquare staticSquares[MAX_STATIC_SQUARES];
+    int staticSquareQuantity;
     
     DynamicSquare dynamicSquares[MAX_DYNAMIC_SQUARES];
     int dynamicSquareQuantity;
+
+    StaticCircle staticCircles[MAX_STATIC_CIRCLES];
+    int staticCircleQuantity;
 
     DynamicCircle dynamicCircles[MAX_DYNAMIC_CIRCLES];
     int dynamicCircleQuantity;

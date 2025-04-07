@@ -3,15 +3,16 @@
 #include "box2d/box2d.h"
 #include "raylib/raylib.h"
 
-#include "RigidSquare.h"
+#include "StaticSquare.h"
 #include "Types.h"
 
-void createRigidSquare( RigidSquare* newSquare, float x, float y, float w, float h, Color color, GameWorld *gw ) {
+void createStaticSquare( StaticSquare* newSquare, float x, float y, float w, float h, Color color, GameWorld *gw ) {
 
     newSquare->dim = (Vector2){ w, h };
 
     newSquare->bodyDef = b2DefaultBodyDef();
     newSquare->bodyDef.position = (b2Vec2){ x, y };
+    newSquare->bodyDef.type = b2_staticBody;
     newSquare->bodyId = b2CreateBody( gw->worldId, &newSquare->bodyDef );
     
     newSquare->polygon = b2MakeBox( w/2, h/2 );
@@ -23,7 +24,7 @@ void createRigidSquare( RigidSquare* newSquare, float x, float y, float w, float
 
 }
 
-void drawRigidSquare( RigidSquare *square ) {
+void drawStaticSquare( StaticSquare *square ) {
 
     DrawRectangle( 
         square->bodyDef.position.x - square->dim.x / 2, 

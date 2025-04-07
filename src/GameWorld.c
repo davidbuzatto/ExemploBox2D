@@ -12,8 +12,8 @@
 #include "Types.h"
 #include "GameWorld.h"
 #include "ResourceManager.h"
-#include "RigidSquare.h"
-#include "RigidCircle.h"
+#include "StaticSquare.h"
+#include "StaticCircle.h"
 #include "DynamicSquare.h"
 #include "DynamicCircle.h"
 
@@ -33,20 +33,25 @@ GameWorld* createGameWorld( void ) {
     gw->worldDef.gravity = (b2Vec2){0.0f, -10.0f};
     gw->worldId = b2CreateWorld( &gw->worldDef );
 
-    gw->rigidSquareQuantity = 0;
+    gw->staticSquareQuantity = 0;
     gw->dynamicSquareQuantity = 0;
+
+    gw->staticCircleQuantity = 0;
     gw->dynamicCircleQuantity = 0;
     
     float cx = GetScreenWidth() / 2;
     float cy = GetScreenHeight() / 2;
     float rWidth = 10.0f;
 
-    createRigidSquare( &gw->rigidSquares[gw->rigidSquareQuantity], cx, -GetScreenHeight() + rWidth / 2, GetScreenWidth(), rWidth, BLACK, gw );
-    gw->rigidSquareQuantity++;
-    createRigidSquare( &gw->rigidSquares[gw->rigidSquareQuantity], rWidth / 2, -cy, rWidth, GetScreenHeight(), BLACK, gw );
-    gw->rigidSquareQuantity++;
-    createRigidSquare( &gw->rigidSquares[gw->rigidSquareQuantity], GetScreenWidth() - rWidth / 2, -cy, rWidth, GetScreenHeight(), BLACK, gw );
-    gw->rigidSquareQuantity++;
+    createStaticSquare( &gw->staticSquares[gw->staticSquareQuantity], cx, -GetScreenHeight() + rWidth / 2, GetScreenWidth(), rWidth, BLACK, gw );
+    gw->staticSquareQuantity++;
+    createStaticSquare( &gw->staticSquares[gw->staticSquareQuantity], rWidth / 2, -cy, rWidth, GetScreenHeight(), BLACK, gw );
+    gw->staticSquareQuantity++;
+    createStaticSquare( &gw->staticSquares[gw->staticSquareQuantity], GetScreenWidth() - rWidth / 2, -cy, rWidth, GetScreenHeight(), BLACK, gw );
+    gw->staticSquareQuantity++;
+
+    createStaticCircle( &gw->staticCircles[gw->staticCircleQuantity], cx, -cy, 30, BLACK, gw );
+    gw->staticCircleQuantity++;
 
     return gw;
 
@@ -65,39 +70,53 @@ void destroyGameWorld( GameWorld *gw ) {
  */
 void updateGameWorld( GameWorld *gw, float delta ) {
 
-    if ( IsMouseButtonDown( MOUSE_BUTTON_LEFT ) ) {
-        /*if ( gw->dynamicSquareQuantity < MAX_DYNAMIC_SQUARES ) {
-            createDynamicSquare( 
-                &gw->dynamicSquares[gw->dynamicSquareQuantity],
-                GetMouseX(), 
-                -GetMouseY(), 
-                //8.0f, 
-                //8.0f,
-                GetRandomValue( 8, 28 ),
-                GetRandomValue( 8, 28 ),
-                ColorFromHSV( gw->dynamicSquareQuantity % 360, 1.0f, 1.0f ),
-                gw
-            );
-            gw->dynamicSquareQuantity++;
-        }*/
-        if ( gw->dynamicCircleQuantity < MAX_DYNAMIC_CIRCLES ) {
-            createDynamicCircle( 
-                &gw->dynamicCircles[gw->dynamicCircleQuantity],
-                GetMouseX(), 
-                -GetMouseY(), 
-                //GetRandomValue( 4, 14 ), 
-                4, 
-                ColorFromHSV( gw->dynamicCircleQuantity % 360, 1.0f, 1.0f ),
-                gw
-            );
-            gw->dynamicCircleQuantity++;
+    if ( IsMouseButtonPressed( MOUSE_BUTTON_LEFT ) ) {
+        if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
+            if ( gw->dynamicCircleQuantity < MAX_DYNAMIC_CIRCLES ) {
+                createDynamicCircle( 
+                    &gw->dynamicCircles[gw->dynamicCircleQuantity],
+                    GetMouseX(), 
+                    -GetMouseY(), 
+                    4, 
+                    ColorFromHSV( gw->dynamicCircleQuantity % 360, 1.0f, 1.0f ),
+                    gw
+                );
+                gw->dynamicCircleQuantity++;
+            }
+        } else {
+            if ( gw->dynamicSquareQuantity < MAX_DYNAMIC_SQUARES ) {
+                createDynamicSquare( 
+                    &gw->dynamicSquares[gw->dynamicSquareQuantity],
+                    GetMouseX(), 
+                    -GetMouseY(), 
+                    8.0f, 
+                    8.0f,
+                    ColorFromHSV( gw->dynamicSquareQuantity % 360, 1.0f, 1.0f ),
+                    gw
+                );
+                gw->dynamicSquareQuantity++;
+            }
         }
     }
 
     if ( IsMouseButtonPressed( MOUSE_BUTTON_RIGHT ) ) {
-        if ( gw->rigidSquareQuantity < MAX_RIGID_SQUARES ) {
-            createRigidSquare( 
-                &gw->rigidSquares[gw->rigidSquareQuantity],
+        if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
+            if ( gw->staticSquareQuantity < MAX_STATIC_SQUARES ) {
+                if ( gw->staticCircleQuantity < MAX_STATIC_CIRCLES ) {
+                    createStaticCircle( 
+                        &gw->staticCircles[gw->staticCircleQuantity],
+                        GetMouseX(), 
+                        -GetMouseY(), 
+                        8.0f, 
+                        BLACK,
+                        gw
+                    );
+                    gw->staticCircleQuantity++;
+                }
+            }
+        } else {
+            createStaticSquare( 
+                &gw->staticSquares[gw->staticSquareQuantity],
                 GetMouseX(), 
                 -GetMouseY(), 
                 8.0f, 
@@ -105,7 +124,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                 BLACK,
                 gw
             );
-            gw->rigidSquareQuantity++;
+            gw->staticSquareQuantity++;
         }
     }
 
@@ -125,12 +144,16 @@ void drawGameWorld( GameWorld *gw ) {
     //rlTranslatef( 200, 200, 0 );
     //rlScalef( 2, 2, 1 );
 
-    for ( int i = 0; i < gw->rigidSquareQuantity; i++ ) {
-        drawRigidSquare( &gw->rigidSquares[i] );
+    for ( int i = 0; i < gw->staticSquareQuantity; i++ ) {
+        drawStaticSquare( &gw->staticSquares[i] );
     }
 
     for ( int i = 0; i < gw->dynamicSquareQuantity; i++ ) {
         drawDynamicSquare( &gw->dynamicSquares[i] );
+    }
+
+    for ( int i = 0; i < gw->staticCircleQuantity; i++ ) {
+        drawStaticCircle( &gw->staticCircles[i] );
     }
 
     for ( int i = 0; i < gw->dynamicCircleQuantity; i++ ) {
@@ -139,6 +162,7 @@ void drawGameWorld( GameWorld *gw ) {
 
     DrawFPS( 20, 20 );
     DrawText( TextFormat( "Squares: %d", gw->dynamicSquareQuantity ), 20, 40, 20, BLACK );
+    DrawText( TextFormat( "Circles: %d", gw->dynamicCircleQuantity ), 20, 60, 20, BLACK );
 
     EndDrawing();
 
