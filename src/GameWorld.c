@@ -71,7 +71,7 @@ void destroyGameWorld( GameWorld *gw ) {
 void updateGameWorld( GameWorld *gw, float delta ) {
 
     if ( IsMouseButtonDown( MOUSE_BUTTON_LEFT ) ) {
-        if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
+        //if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
             if ( gw->dynamicCircleQuantity < MAX_DYNAMIC_CIRCLES ) {
                 createDynamicCircle( 
                     &gw->dynamicCircles[gw->dynamicCircleQuantity],
@@ -84,20 +84,22 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                 );
                 gw->dynamicCircleQuantity++;
             }
-        } else {
+        //} else {
             if ( gw->dynamicSquareQuantity < MAX_DYNAMIC_SQUARES ) {
                 createDynamicSquare( 
                     &gw->dynamicSquares[gw->dynamicSquareQuantity],
                     GetMouseX(), 
                     GetScreenHeight() - GetMouseY(), 
-                    8.0f, 
-                    8.0f,
-                    ColorFromHSV( gw->dynamicSquareQuantity % 360, 1.0f, 1.0f ),
+                    //8.0f, 
+                    //8.0f,
+                    GetRandomValue( 8, 28 ),
+                    GetRandomValue( 8, 28 ),
+                    ColorFromHSV( 360 - gw->dynamicSquareQuantity % 360, 1.0f, 1.0f ),
                     gw
                 );
                 gw->dynamicSquareQuantity++;
             }
-        }
+        //}
     }
 
     if ( IsMouseButtonPressed( MOUSE_BUTTON_RIGHT ) ) {
