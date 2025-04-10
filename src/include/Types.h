@@ -3,20 +3,18 @@
 #include "box2d/box2d.h"
 #include "raylib/raylib.h"
 
-#define MAX_STATIC_SQUARES 100
-#define MAX_STATIC_CIRCLES 100
-#define MAX_DYNAMIC_SQUARES 5000
-#define MAX_DYNAMIC_CIRCLES 5000
+#define MAX_STATIC_BODIES 100
+#define MAX_DYNAMIC_BODIES 5000
 
-typedef struct DynamicSquare {
+typedef struct DynamicRectangle {
     Vector2 dim;
     b2BodyDef bodyDef;
     b2BodyId bodyId;
-    b2Polygon polygon;
+    b2Polygon rect;
     b2ShapeDef shapeDef;
     b2ShapeId shapeId;
     Color color;
-} DynamicSquare;
+} DynamicRectangle;
 
 typedef struct DynamicCircle {
     float radius;
@@ -28,15 +26,25 @@ typedef struct DynamicCircle {
     Color color;
 } DynamicCircle;
 
-typedef struct StaticSquare {
-    Vector2 dim;
+typedef struct DynamicCapsule {
+    float radius;
     b2BodyDef bodyDef;
     b2BodyId bodyId;
-    b2Polygon polygon;
+    b2Capsule capsule;
     b2ShapeDef shapeDef;
     b2ShapeId shapeId;
     Color color;
-} StaticSquare;
+} DynamicCapsule;
+
+typedef struct StaticRectangle {
+    Vector2 dim;
+    b2BodyDef bodyDef;
+    b2BodyId bodyId;
+    b2Polygon rect;
+    b2ShapeDef shapeDef;
+    b2ShapeId shapeId;
+    Color color;
+} StaticRectangle;
 
 typedef struct StaticCircle {
     float radius;
@@ -53,16 +61,23 @@ typedef struct GameWorld {
     b2WorldDef worldDef;
     b2WorldId worldId;
 
-    StaticSquare staticSquares[MAX_STATIC_SQUARES];
-    int staticSquareQuantity;
+    StaticRectangle staticRectangles[MAX_STATIC_BODIES];
+    int staticRectanglesQuantity;
     
-    DynamicSquare dynamicSquares[MAX_DYNAMIC_SQUARES];
-    int dynamicSquareQuantity;
+    StaticCircle staticCircles[MAX_STATIC_BODIES];
+    int staticCirclesQuantity;
 
-    StaticCircle staticCircles[MAX_STATIC_CIRCLES];
-    int staticCircleQuantity;
+    DynamicRectangle dynamicRectangles[MAX_DYNAMIC_BODIES];
+    int dynamicRectanglesQuantity;
 
-    DynamicCircle dynamicCircles[MAX_DYNAMIC_CIRCLES];
-    int dynamicCircleQuantity;
+    DynamicCircle dynamicCircles[MAX_DYNAMIC_BODIES];
+    int dynamicCirclesQuantity;
+
+    DynamicCapsule dynamicCapsules[MAX_DYNAMIC_BODIES];
+    int dynamicCapsulesQuantity;
+
+    b2Vec2 chainPoints[100];
+    int chainPointsQuantity;
+    bool finishedChain;
 
 } GameWorld;

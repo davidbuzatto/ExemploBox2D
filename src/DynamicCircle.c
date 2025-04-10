@@ -55,7 +55,8 @@ void createDynamicCircle( DynamicCircle* newCircle, float x, float y, float r, C
 
     newCircle->shapeDef = b2DefaultShapeDef();
     newCircle->shapeDef.density = 1.0f;
-    newCircle->shapeDef.friction = 0.3f;
+    newCircle->shapeDef.friction = 0.1f;
+    newCircle->shapeDef.restitution = 0.3f;
 
     newCircle->shapeId = b2CreateCircleShape( newCircle->bodyId, &newCircle->shapeDef, &newCircle->circle );
 

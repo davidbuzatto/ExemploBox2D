@@ -29,3 +29,6 @@ void updateGameWorld( GameWorld *gw, float delta );
  * @brief Draws the state of the game.
  */
 void drawGameWorld( GameWorld *gw );
+
+void createStaticEntities( GameWorld *gw );
+void createDynamicEntities( GameWorld *gw );
