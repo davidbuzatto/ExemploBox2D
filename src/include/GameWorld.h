@@ -32,3 +32,6 @@ void drawGameWorld( GameWorld *gw );
 
 void createStaticEntities( GameWorld *gw );
 void createDynamicEntities( GameWorld *gw );
+void tryToCreateChain( GameWorld *gw );
+
+void tests( GameWorld *gw );

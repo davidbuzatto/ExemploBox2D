@@ -79,76 +79,11 @@ void destroyGameWorld( GameWorld *gw ) {
  */
 void updateGameWorld( GameWorld *gw, float delta ) {
 
-    /*if ( IsMouseButtonPressed( MOUSE_BUTTON_LEFT ) ) {
-
-        if ( gw->dynamicCapsulesQuantity < MAX_DYNAMIC_BODIES ) {
-            createDynamicCapsule( 
-                &gw->dynamicCapsules[gw->dynamicCapsulesQuantity],
-                GetMouseX(), GetScreenHeight() - GetMouseY(), 
-                20, 0,
-                10,
-                ColorFromHSV( gw->dynamicCapsulesQuantity % 360, 1.0f, 1.0f ),
-                gw
-            );
-            gw->dynamicCapsulesQuantity++;
-        }
-
-    }*/
-
-    if ( IsKeyPressed( KEY_F ) ) {
-        for ( int i = 0; i < gw->dynamicCapsulesQuantity; i++ ) {
-            applyForceDynamicCapsule( &gw->dynamicCapsules[i] );
-        }
-    }
-
-    if ( !gw->finishedChain ) {
-
-        if ( IsMouseButtonPressed( MOUSE_BUTTON_RIGHT ) ) {
-            int q = gw->chainPointsQuantity;
-            gw->chainPoints[q].x = GetMouseX();
-            gw->chainPoints[q].y = GetScreenHeight() - GetMouseY();
-            gw->chainPointsQuantity++;
-        }
-
-        if ( IsKeyPressed( KEY_ENTER ) ) {
-
-            int q = gw->chainPointsQuantity;
-            gw->chainPoints[q].x = gw->chainPoints[0].x;
-            gw->chainPoints[q].y = gw->chainPoints[0].y;
-            gw->chainPointsQuantity++;
-
-            b2BodyDef bodyDef = b2DefaultBodyDef();
-            //bodyDef.position = (b2Vec2){ gw->chainPoints[0].x, gw->chainPoints[0].y };
-            bodyDef.type = b2_staticBody;
-            b2BodyId bodyId = b2CreateBody( gw->worldId, &bodyDef );
-            b2ChainDef chainDef = b2DefaultChainDef();
-
-            // não precisa, o corpo é estático!!! abaixo seria se fosse dinâmico!!!
-            // process chainPoints
-            /*b2Vec2 pChainPoints[100];
-            for ( int i = 0; i < gw->chainPointsQuantity; i++ ) {
-                //if ( i == 0 || i == gw->chainPointsQuantity - 1 ) {
-                //    pChainPoints[i].x = gw->chainPoints[i].x;
-                //    pChainPoints[i].y = gw->chainPoints[i].y;
-                //} else {
-                    pChainPoints[i].x = gw->chainPoints[i].x - gw->chainPoints[0].x;
-                    pChainPoints[i].y = gw->chainPoints[i].y - gw->chainPoints[0].y;
-                //}
-            }*/
-
-            chainDef.points = gw->chainPoints;
-            //chainDef.points = pChainPoints;
-            chainDef.count = gw->chainPointsQuantity;
-            b2ChainId chainId = b2CreateChain( bodyId, &chainDef );
-
-            gw->finishedChain = true;
-
-        }
-
-    }
-
+    tests( gw );
+    
+    tryToCreateChain( gw );
     //createStaticEntities( gw );
-    createDynamicEntities( gw );
+    //createDynamicEntities( gw );
 
     int subStepCount = 4;
     b2World_Step( gw->worldId, delta, subStepCount );
@@ -189,12 +124,15 @@ void drawGameWorld( GameWorld *gw ) {
     }
 
     if ( gw->finishedChain ) {
-        for ( int i = 1; i < gw->chainPointsQuantity - 2; i++ ) {
+        /*for ( int i = 1; i < gw->chainPointsQuantity - 2; i++ ) {
             DrawTriangle( 
                 (Vector2) { gw->chainPoints[0].x, -gw->chainPoints[0].y },
                 (Vector2) { gw->chainPoints[i].x, -gw->chainPoints[i].y },
                 (Vector2) { gw->chainPoints[i+1].x, -gw->chainPoints[i+1].y },
                 BLACK );
+        }*/
+        for ( int i = 0; i < gw->chainPointsQuantity - 1; i++ ) {
+            DrawLine( gw->chainPoints[i].x, -gw->chainPoints[i].y, gw->chainPoints[i+1].x, -gw->chainPoints[i+1].y, BLACK  );
         }
     } else {
         for ( int i = 0; i < gw->chainPointsQuantity - 1; i++ ) {
@@ -267,10 +205,9 @@ void createDynamicEntities( GameWorld *gw ) {
             if ( gw->dynamicCapsulesQuantity < MAX_DYNAMIC_BODIES ) {
                 createDynamicCapsule( 
                     &gw->dynamicCapsules[gw->dynamicCapsulesQuantity],
-                    GetMouseX(), 
-                    GetScreenHeight() - GetMouseY(), 
-                    0, 0,
-                    4,
+                    GetMouseX(), GetScreenHeight() - GetMouseY(), 
+                    20, 0,
+                    10,
                     ColorFromHSV( gw->dynamicCapsulesQuantity % 360, 1.0f, 1.0f ),
                     gw
                 );
@@ -291,6 +228,65 @@ void createDynamicEntities( GameWorld *gw ) {
             }
         }
         
+    }
+
+}
+
+void tryToCreateChain( GameWorld *gw ) {
+
+    if ( !gw->finishedChain ) {
+
+        if ( IsMouseButtonPressed( MOUSE_BUTTON_RIGHT ) ) {
+            int q = gw->chainPointsQuantity;
+            gw->chainPoints[q].x = GetMouseX();
+            gw->chainPoints[q].y = GetScreenHeight() - GetMouseY();
+            gw->chainPointsQuantity++;
+        }
+
+        if ( IsKeyPressed( KEY_ENTER ) ) {
+
+            int q = gw->chainPointsQuantity;
+            gw->chainPoints[q].x = gw->chainPoints[0].x;
+            gw->chainPoints[q].y = gw->chainPoints[0].y;
+            gw->chainPointsQuantity++;
+
+            b2BodyDef bodyDef = b2DefaultBodyDef();
+            bodyDef.type = b2_staticBody;
+            b2BodyId bodyId = b2CreateBody( gw->worldId, &bodyDef );
+            b2ChainDef chainDef = b2DefaultChainDef();
+
+            chainDef.points = gw->chainPoints;
+            chainDef.count = gw->chainPointsQuantity;
+            b2CreateChain( bodyId, &chainDef );
+
+            gw->finishedChain = true;
+
+        }
+
+    }
+
+}
+
+void tests( GameWorld *gw ) {
+
+    if ( IsKeyDown( KEY_RIGHT ) ) {
+        for ( int i = 0; i < gw->dynamicCapsulesQuantity; i++ ) {
+            applyForceDynamicCapsule( &gw->dynamicCapsules[i] );
+        }
+    }
+
+    if ( IsMouseButtonPressed( MOUSE_BUTTON_LEFT ) ) {
+        if ( gw->dynamicCapsulesQuantity < MAX_DYNAMIC_BODIES ) {
+            createDynamicCapsule( 
+                &gw->dynamicCapsules[gw->dynamicCapsulesQuantity],
+                GetMouseX(), GetScreenHeight() - GetMouseY(), 
+                20, 0,
+                10,
+                ColorFromHSV( gw->dynamicCapsulesQuantity % 360, 1.0f, 1.0f ),
+                gw
+            );
+            gw->dynamicCapsulesQuantity++;
+        }
     }
 
 }

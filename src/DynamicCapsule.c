@@ -76,9 +76,14 @@ void applyForceDynamicCapsule( DynamicCapsule *capsule ) {
     //b2Body_ApplyLinearImpulse(myBodyId, linearImpulse, worldPoint, wake);
     //b2Body_ApplyAngularImpulse(myBodyId, angularImpulse, wake);
     //b2Body_ApplyForceToCenter(myBodyId, force, wake);
-    //b2Body_ApplyForceToCenter( capsule->bodyId, (b2Vec2){ 100000, 10 }, true );
+    if ( b2Body_GetLinearVelocity( capsule->bodyId ).x < 200 ) {
+        b2Body_ApplyForceToCenter( capsule->bodyId, (b2Vec2){ 1000000, 0 }, true );
+    }
+    
 
     //b2Body_ApplyLinearImpulseToCenter(myBodyId, linearImpulse, wake);
-    b2Body_ApplyLinearImpulseToCenter( capsule->bodyId, (b2Vec2){ 100000, 10000 }, true );
+    //b2Body_ApplyLinearImpulseToCenter( capsule->bodyId, (b2Vec2){ 100000, 0 }, true );
+    //b2Body_SetLinearVelocity( capsule->bodyId, (b2Vec2){ 200, 0 } );
+    //b2Body_SetLinearDamping( capsule->bodyId, 300 );
 
 }
