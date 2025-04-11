@@ -70,7 +70,7 @@ void drawDynamicCircle( DynamicCircle *circle ) {
 
     DrawCircle( 
         position.x, 
-        -position.y, 
+        position.y, 
         circle->radius,  
         circle->color );
     

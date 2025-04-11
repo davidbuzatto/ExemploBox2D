@@ -28,7 +28,7 @@ void drawStaticRectangle( StaticRectangle *rectangle ) {
 
     DrawRectangle( 
         rectangle->bodyDef.position.x - rectangle->dim.x / 2, 
-        -rectangle->bodyDef.position.y - rectangle->dim.y / 2, 
+        rectangle->bodyDef.position.y - rectangle->dim.y / 2, 
         rectangle->dim.x, 
         rectangle->dim.y, 
         rectangle->color );

@@ -34,7 +34,7 @@ void drawDynamicRectangle( DynamicRectangle *rectangle ) {
 
     Rectangle rect = (Rectangle){ 
         position.x, 
-        -position.y, 
+        position.y, 
         rectangle->dim.x, 
         rectangle->dim.y
     };

@@ -34,8 +34,7 @@ GameWorld* createGameWorld( void ) {
 	b2SetLengthUnitsPerMeter( lengthUnitsPerMeter );
 
     gw->worldDef = b2DefaultWorldDef();
-    //gw->worldDef.gravity = (b2Vec2){ 0.0f, -10.0f };
-    gw->worldDef.gravity = (b2Vec2){ 0.0f, -9.8f * lengthUnitsPerMeter };
+    gw->worldDef.gravity = (b2Vec2){ 0.0f, 9.8f * lengthUnitsPerMeter };
     gw->worldId = b2CreateWorld( &gw->worldDef );
 
     gw->staticRectanglesQuantity = 0;
@@ -52,15 +51,12 @@ GameWorld* createGameWorld( void ) {
     float cy = GetScreenHeight() / 2;
     float rWidth = 10.0f;
 
-    createStaticRectangle( &gw->staticRectangles[gw->staticRectanglesQuantity], cx, rWidth / 2, GetScreenWidth(), rWidth, BLACK, gw );
+    createStaticRectangle( &gw->staticRectangles[gw->staticRectanglesQuantity], cx, GetScreenHeight() - rWidth / 2, GetScreenWidth(), rWidth, BLACK, gw );
     gw->staticRectanglesQuantity++;
     createStaticRectangle( &gw->staticRectangles[gw->staticRectanglesQuantity], rWidth / 2, cy, rWidth, GetScreenHeight(), BLACK, gw );
     gw->staticRectanglesQuantity++;
     createStaticRectangle( &gw->staticRectangles[gw->staticRectanglesQuantity], GetScreenWidth() - rWidth / 2, cy, rWidth, GetScreenHeight(), BLACK, gw );
     gw->staticRectanglesQuantity++;
-
-    /*createStaticCircle( &gw->staticCircles[gw->staticCircleQuantity], cx, cy, 30, BLACK, gw );
-    gw->staticCirclesQuantity++;*/
 
     return gw;
 
@@ -79,11 +75,11 @@ void destroyGameWorld( GameWorld *gw ) {
  */
 void updateGameWorld( GameWorld *gw, float delta ) {
 
-    tests( gw );
+    //tests( gw );
     
     tryToCreateChain( gw );
     //createStaticEntities( gw );
-    //createDynamicEntities( gw );
+    createDynamicEntities( gw );
 
     int subStepCount = 4;
     b2World_Step( gw->worldId, delta, subStepCount );
@@ -99,9 +95,6 @@ void drawGameWorld( GameWorld *gw ) {
 
     BeginDrawing();
     ClearBackground( WHITE );
-
-    rlTranslatef( 0, GetScreenHeight(), 0 );
-    //rlScalef( 2, 2, 1 );
 
     for ( int i = 0; i < gw->staticRectanglesQuantity; i++ ) {
         drawStaticRectangle( &gw->staticRectangles[i] );
@@ -132,18 +125,18 @@ void drawGameWorld( GameWorld *gw ) {
                 BLACK );
         }*/
         for ( int i = 0; i < gw->chainPointsQuantity - 1; i++ ) {
-            DrawLine( gw->chainPoints[i].x, -gw->chainPoints[i].y, gw->chainPoints[i+1].x, -gw->chainPoints[i+1].y, BLACK  );
+            DrawLine( gw->chainPoints[i].x, gw->chainPoints[i].y, gw->chainPoints[i+1].x, gw->chainPoints[i+1].y, BLACK  );
         }
     } else {
         for ( int i = 0; i < gw->chainPointsQuantity - 1; i++ ) {
-            DrawLine( gw->chainPoints[i].x, -gw->chainPoints[i].y, gw->chainPoints[i+1].x, -gw->chainPoints[i+1].y, BLACK  );
+            DrawLine( gw->chainPoints[i].x, gw->chainPoints[i].y, gw->chainPoints[i+1].x, gw->chainPoints[i+1].y, BLACK  );
         }
     }
 
-    DrawFPS( 20, -GetScreenHeight() + 20 );
-    DrawText( TextFormat( "Rectangles: %d", gw->dynamicRectanglesQuantity ), 20, -GetScreenHeight() + 40, 20, BLACK );
-    DrawText( TextFormat( "Circles: %d", gw->dynamicCirclesQuantity ), 20, -GetScreenHeight() + 60, 20, BLACK );
-    DrawText( TextFormat( "Capsules: %d", gw->dynamicCapsulesQuantity ), 20, -GetScreenHeight() + 80, 20, BLACK );
+    DrawFPS( 20, 20 );
+    DrawText( TextFormat( "Rectangles: %d", gw->dynamicRectanglesQuantity ), 20, 40, 20, BLACK );
+    DrawText( TextFormat( "Circles: %d", gw->dynamicCirclesQuantity ), 20, 60, 20, BLACK );
+    DrawText( TextFormat( "Capsules: %d", gw->dynamicCapsulesQuantity ), 20, 80, 20, BLACK );
 
     EndDrawing();
 
@@ -158,7 +151,7 @@ void createStaticEntities( GameWorld *gw ) {
                     createStaticCircle( 
                         &gw->staticCircles[gw->staticCirclesQuantity],
                         GetMouseX(), 
-                        GetScreenHeight() - GetMouseY(), 
+                        GetMouseY(), 
                         8.0f, 
                         BLACK,
                         gw
@@ -170,7 +163,7 @@ void createStaticEntities( GameWorld *gw ) {
             createStaticRectangle( 
                 &gw->staticRectangles[gw->staticRectanglesQuantity],
                 GetMouseX(), 
-                GetScreenHeight() - GetMouseY(), 
+                GetMouseY(), 
                 16.0f, 
                 16.0f, 
                 BLACK,
@@ -191,7 +184,7 @@ void createDynamicEntities( GameWorld *gw ) {
                 createDynamicRectangle( 
                     &gw->dynamicRectangles[gw->dynamicRectanglesQuantity],
                     GetMouseX(), 
-                    GetScreenHeight() - GetMouseY(), 
+                    GetMouseY(), 
                     //8.0f, 
                     //8.0f,
                     GetRandomValue( 8, 28 ),
@@ -205,7 +198,7 @@ void createDynamicEntities( GameWorld *gw ) {
             if ( gw->dynamicCapsulesQuantity < MAX_DYNAMIC_BODIES ) {
                 createDynamicCapsule( 
                     &gw->dynamicCapsules[gw->dynamicCapsulesQuantity],
-                    GetMouseX(), GetScreenHeight() - GetMouseY(), 
+                    GetMouseX(), GetMouseY(), 
                     20, 0,
                     10,
                     ColorFromHSV( gw->dynamicCapsulesQuantity % 360, 1.0f, 1.0f ),
@@ -218,7 +211,7 @@ void createDynamicEntities( GameWorld *gw ) {
                 createDynamicCircle( 
                     &gw->dynamicCircles[gw->dynamicCirclesQuantity],
                     GetMouseX(), 
-                    GetScreenHeight() - GetMouseY(), 
+                    GetMouseY(), 
                     4, 
                     //GetRandomValue( 4, 20 ),
                     ColorFromHSV( gw->dynamicCirclesQuantity % 360, 1.0f, 1.0f ),
@@ -239,7 +232,7 @@ void tryToCreateChain( GameWorld *gw ) {
         if ( IsMouseButtonPressed( MOUSE_BUTTON_RIGHT ) ) {
             int q = gw->chainPointsQuantity;
             gw->chainPoints[q].x = GetMouseX();
-            gw->chainPoints[q].y = GetScreenHeight() - GetMouseY();
+            gw->chainPoints[q].y = GetMouseY();
             gw->chainPointsQuantity++;
         }
 
@@ -279,7 +272,7 @@ void tests( GameWorld *gw ) {
         if ( gw->dynamicCapsulesQuantity < MAX_DYNAMIC_BODIES ) {
             createDynamicCapsule( 
                 &gw->dynamicCapsules[gw->dynamicCapsulesQuantity],
-                GetMouseX(), GetScreenHeight() - GetMouseY(), 
+                GetMouseX(), GetMouseY(), 
                 20, 0,
                 10,
                 ColorFromHSV( gw->dynamicCapsulesQuantity % 360, 1.0f, 1.0f ),

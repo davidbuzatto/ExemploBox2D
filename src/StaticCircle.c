@@ -33,13 +33,13 @@ void drawStaticCircle( StaticCircle *circle ) {
 
     DrawCircle( 
         position.x, 
-        -position.y, 
+        position.y, 
         circle->circle.radius,  
         circle->color );
 
     /*DrawCircle( 
         circle->bodyDef.position.x, 
-        -circle->bodyDef.position.y, 
+        circle->bodyDef.position.y, 
         circle->radius,  
         circle->color );*/
     
