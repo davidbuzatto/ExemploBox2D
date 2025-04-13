@@ -42,8 +42,7 @@ void drawDynamicRectangle( DynamicRectangle *rectangle ) {
     DrawRectanglePro( 
         rect, 
         (Vector2) { rect.width / 2, rect.height / 2 }, 
-        RAD2DEG * atan2( rotation.c, rotation.s ),   // ângulo do número complexo (rotation)
-        //RAD2DEG * b2Rot_GetAngle( rotation ),   // ângulo do número complexo (rotation)
+        RAD2DEG * b2Rot_GetAngle( rotation ),
         rectangle->color
     );
     
